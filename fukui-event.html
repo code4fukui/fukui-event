@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>ふくいドットコム コンベンション参加予定数の積み上げ棒グラフ</title>
+</head><body>
+<h1>ふくいドットコム コンベンション参加予定数の積み上げ棒グラフ</h1>
+
+<div id="chart1" style="width:100%;"></div>
+<hr>
+データ出典: <a href=https://www.fuku-e.com/business/convention/documents#561>コンベンションスケジュール（一般用） - コンベンション各種資料｜ 【公式】福井県 観光/旅行サイト ｜ ふくいドットコム</a><br>
+<a href=https://github.com/code4fukui/fukui-event/>data and src on GitHub</a><br>
+
+<script type="module">
+import { StackedBarChartDateSVG } from "./StackedBarChartDateSVG.js";
+import { CSV } from "https://js.sabae.cc/CSV.js";
+import { Day } from "https://js.sabae.cc/DateTime.js";
+
+const data0 = await CSV.fetchJSON("fukui-event-all.csv");
+data0.sort((a, b) => a.開催日.localeCompare(b.開催日));
+console.log(data0);
+
+const today = new Day();
+const fisyear = today.year - (today.month < 4 ? 1 : 0);
+console.log(fisyear);
+const startday = new Day(fisyear, 4, 1);
+const endday = new Day(fisyear + 1, 3, 31);
+
+const data = [];
+for (const item of data0) {
+  try {
+    const end = new Day(item.開催終了日 || item.開催日).nextDay();
+    for (let date = item.開催日; new Day(date).isBefore(end); date = new Day(date).nextDay().toString()) {
+      const d = new Day(date);
+      if (d.isBefore(startday) || d.isAfter(endday)) continue;
+      //console.log(date, item.開催日, item.開催終了日);
+      const i = data.find(i => i.date == date);
+      const v = parseInt(item.参加者予定数);
+      if (isNaN(v)) continue;
+      if (i) {
+        i.values.push(v);
+      } else {
+        data.push({ date, values: [v] });
+      }
+    }
+  } catch (e) {
+    // ignore illegal date
+  }
+}
+console.log(data);
+
+chart1.appendChild(new StackedBarChartDateSVG({
+  width: 1720,
+  height: 500,
+  //title: "ふくいドットコム コンベンション参加予定数の積み上げ棒グラフ",
+  //colors: ["#f8b6c2", "#fde1a0", "#a4d6b1"],
+  barWidth: 3,
+  gap: 3,
+  tickCountX: 12,
+  data,
+}));
+
+</script>
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+a {
+  color: gray !important;
+}
+</style>
+</body></html>
