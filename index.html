@@ -4,12 +4,16 @@
 <h1>ふくいドットコム コンベンション参加予定数の積み上げ棒グラフ</h1>
 
 <div id="chart1" style="width:100%;"></div>
+
+<script type="module" src="https://code4sabae.github.io/js/csv-viewer.js"></script>
+<csv-viewer src="fukui-event-all.csv"></csv-viewer>
+
 <hr>
 データ出典: <a href=https://www.fuku-e.com/business/convention/documents#561>コンベンションスケジュール（一般用） - コンベンション各種資料｜ 【公式】福井県 観光/旅行サイト ｜ ふくいドットコム</a><br>
 <a href=https://github.com/code4fukui/fukui-event/>data and src on GitHub</a><br>
 
 <script type="module">
-import { StackedBarChartDateSVG } from "./StackedBarChartDateSVG.js";
+import { StackedBarChartDateSVG } from "https://code4fukui.github.io/svg-chart/StackedBarChartDateSVG.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
 import { Day } from "https://js.sabae.cc/DateTime.js";
 
@@ -65,6 +69,14 @@ body {
 }
 a {
   color: gray !important;
+}
+td, th {
+  border: 1px solid;
+  font-size: 85%;
+  text-align: left;
+}
+table {
+  border-collapse: collapse;
 }
 </style>
 </body></html>
